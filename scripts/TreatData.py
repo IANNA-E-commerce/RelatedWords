@@ -34,3 +34,11 @@ class TreatData:
                 lemma = nlp(word)[0].lemma_
                 words.append(lemma)
         return words
+
+    # Receives a string array and returns the misspelled words in an array
+    # def find_misspelled_words(array):
+    #     misspelled = []
+    #     for word in array:
+    #         if not enchant_dict.check(word):
+    #             misspelled.append(word)
+    #     return misspelled

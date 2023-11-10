@@ -1,43 +1,19 @@
 import enchant
 
 from scripts.TreatData import TreatData
+from scripts.TreatDictionaries import TreatDictionaries
 
 enchant_dict = None
 chosen_language = ""
-custom_corrections_file = ""
-custom_corrections = {}
+custom_corrections = []
 index_word = 1
 corrected_words = []
 
 
-# Change the program for each language chosen
-def define_language(language):
-    global custom_corrections_file
-    global enchant_dict
-    if language == "en_US":
-        custom_corrections_file = "../dict/dictionary_english.txt"
-        enchant_dict = enchant.Dict('en_US')
-    elif language == "es_MX":
-        custom_corrections_file = "../dict/dictionary_spanish.txt"
-        enchant_dict = enchant.Dict('es_MX')
-    else:
-        custom_corrections_file = "../dict/dictionary_portuguese.txt"
-        enchant_dict = enchant.Dict('pt_BR')
-    open_file_custom_corrections()
-
-
-# Open and modify the file with custom corrections
-def open_file_custom_corrections():
-    with open(custom_corrections_file, "r") as file:
-        for line in file:
-            parts = line.strip().split(":")
-            if len(parts) == 2:
-                incorrect_word, correct_word = parts[0], parts[1]
-                custom_corrections[incorrect_word] = correct_word
-
-
 # Find the misspelled words
 def find_errors(text):
+    global enchant_dict
+    print(enchant_dict)
     misspelled = []
     for word in text:
         if not enchant_dict.check(word):
@@ -99,7 +75,10 @@ def find_words(word):
 
 def verification_correction(array_info):
     global index_word
-    define_language(array_info[1])
+    results = TreatDictionaries.define_language(array_info[1])
+    enchant_dict = results[0]
+    print(enchant_dict)
+    custom_corrections = results[1]
     array = TreatData.clean_text(array_info[0])
     wrong_words = find_errors(array)
 

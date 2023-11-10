@@ -12,6 +12,8 @@ from scripts.TreatData import TreatData
 # Carrega o modelo em português
 nlp = spacy.load('pt_core_news_md')
 
+def
+
 # Cria dois objetos Doc
 doc1 = TreatData.clean_and_refactoring_text("açAí caiu morrera chutou abraçará colhendo abrasivo mouse abraçar-te-ia",
                                             "pt_BR", nlp)
