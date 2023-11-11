@@ -13,7 +13,6 @@ corrected_words = []
 # Find the misspelled words
 def find_errors(text):
     global enchant_dict
-    print(enchant_dict)
     misspelled = []
     for word in text:
         if not enchant_dict.check(word):
@@ -75,9 +74,10 @@ def find_words(word):
 
 def verification_correction(array_info):
     global index_word
+    global enchant_dict
+
     results = TreatDictionaries.define_language(array_info[1])
     enchant_dict = results[0]
-    print(enchant_dict)
     custom_corrections = results[1]
     array = TreatData.clean_text(array_info[0])
     wrong_words = find_errors(array)
