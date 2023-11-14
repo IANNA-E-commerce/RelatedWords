@@ -47,19 +47,20 @@ class TreatData:
                 for word in array:
                     cleaned_word = re.sub(r"[()]", "", word)
                     text_row = ""
-                    lemma = nlp(cleaned_word)
-                    for token in lemma:
-                        token_lemma = token.lemma_
-                        blob = TextBlob(token_lemma)
-                        if not spell.unknown(token_lemma):
+                    # lemma = nlp(cleaned_word)
+                    print(cleaned_word)
+                    for token in cleaned_word:
+                        # token_lemma = token.lemma_
+                        blob = TextBlob(token)
+                        if not spell.unknown(token):
                             try:
                                 translated_word = blob.translate(to="pt", from_lang="en")
                                 text_row = f"{text_row} {translated_word} {' '}"
                             except Exception:
-                                text_row = f"{text_row} {token_lemma} {' '}"
+                                text_row = f"{text_row} {token} {' '}"
                             text_row = text_row.lower()
                         else:
-                            text_row = f"{text_row} {token_lemma} {' '}"
+                            text_row = f"{text_row} {token} {' '}"
                     text_row = text_row.rstrip()
                     array_translated.append(text_row)
                 matrix_translated.append(array_translated)
