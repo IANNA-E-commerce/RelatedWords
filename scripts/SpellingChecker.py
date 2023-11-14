@@ -1,5 +1,3 @@
-import enchant
-
 from scripts.TreatData import TreatData
 from scripts.TreatDictionaries import TreatDictionaries
 
@@ -117,5 +115,5 @@ def custom_spell_check(array_info):
     return corrected_text
 
 
-input_info = ["açõEs açores caÇhorão", "pt_BR"]
+input_info = ["açõEs açores caÇhorão vou", "pt_BR"]
 custom_spell_check(input_info)

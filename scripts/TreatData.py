@@ -1,7 +1,9 @@
 import re
 
+import spacy
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+from textblob import TextBlob
 
 
 class TreatData:
@@ -35,10 +37,24 @@ class TreatData:
                 words.append(lemma)
         return words
 
-    # Receives a string array and returns the misspelled words in an array
-    # def find_misspelled_words(array):
-    #     misspelled = []
-    #     for word in array:
-    #         if not enchant_dict.check(word):
-    #             misspelled.append(word)
-    #     return misspelled
+    def refactoring_data_bd(matrix):
+        nlp = spacy.load('pt_core_news_md')
+        matrix_translated = []
+        for array in matrix:
+            array_translated = []
+            for word in array:
+                text_row = ""
+                lemma = nlp(word)
+                for token in lemma:
+                    print(token.lemma_)
+                    blob = TextBlob(token.lemma_)
+                    # if blob.detect_language() != "en":
+                    blob.translate("pt")
+                    text_row += token.lemma_ + " "
+                text_row = text_row.rstrip()
+                array_translated.append(text_row)
+            matrix_translated.append(array_translated)
+        print(matrix_translated)
+
+
+TreatData.refactoring_data_bd([["motor mining", "agro"], ["ClassifierEdge no-code", "energias"]])

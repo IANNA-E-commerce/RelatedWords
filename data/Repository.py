@@ -1,4 +1,5 @@
 import mysql.connector
+from scripts.TreatData import TreatData
 
 # Conectar ao banco de dados
 conn = mysql.connector.connect(
@@ -16,8 +17,8 @@ cursor.execute('SELECT p.name, c.name FROM product as p, category as c where p.c
 
 # Buscar os resultados
 products = cursor.fetchall()
+TreatData.refactoring_data_bd(products)
 
 # Fechar a conexão
 conn.close()
 cursor.close()
-
