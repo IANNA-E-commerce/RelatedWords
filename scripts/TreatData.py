@@ -1,8 +1,8 @@
 import re
 
 import spacy
-from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+from spellchecker import SpellChecker
 from textblob import TextBlob
 
 
@@ -40,21 +40,29 @@ class TreatData:
     def refactoring_data_bd(matrix):
         nlp = spacy.load('pt_core_news_md')
         matrix_translated = []
-        for array in matrix:
-            array_translated = []
-            for word in array:
-                text_row = ""
-                lemma = nlp(word)
-                for token in lemma:
-                    print(token.lemma_)
-                    blob = TextBlob(token.lemma_)
-                    # if blob.detect_language() != "en":
-                    blob.translate("pt")
-                    text_row += token.lemma_ + " "
-                text_row = text_row.rstrip()
-                array_translated.append(text_row)
-            matrix_translated.append(array_translated)
-        print(matrix_translated)
-
-
-TreatData.refactoring_data_bd([["motor mining", "agro"], ["ClassifierEdge no-code", "energias"]])
+        spell = SpellChecker(language="pt")
+        try:
+            for array in matrix:
+                array_translated = []
+                for word in array:
+                    cleaned_word = re.sub(r"[()]", "", word)
+                    text_row = ""
+                    lemma = nlp(cleaned_word)
+                    for token in lemma:
+                        token_lemma = token.lemma_
+                        blob = TextBlob(token_lemma)
+                        if not spell.unknown(token_lemma):
+                            try:
+                                translated_word = blob.translate(to="pt", from_lang="en")
+                                text_row = f"{text_row} {translated_word} {' '}"
+                            except Exception:
+                                text_row = f"{text_row} {token_lemma} {' '}"
+                            text_row = text_row.lower()
+                        else:
+                            text_row = f"{text_row} {token_lemma} {' '}"
+                    text_row = text_row.rstrip()
+                    array_translated.append(text_row)
+                matrix_translated.append(array_translated)
+        except Exception as e:
+            print("Exceção:", e)
+        return matrix_translated

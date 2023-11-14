@@ -76,7 +76,6 @@ def verification_correction(array_info):
 
     results = TreatDictionaries.define_language(array_info[1])
     enchant_dict = results[0]
-    custom_corrections = results[1]
     array = TreatData.clean_text(array_info[0])
     wrong_words = find_errors(array)
 

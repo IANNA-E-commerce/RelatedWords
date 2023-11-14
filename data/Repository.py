@@ -17,7 +17,9 @@ cursor.execute('SELECT p.name, c.name FROM product as p, category as c where p.c
 
 # Buscar os resultados
 products = cursor.fetchall()
-TreatData.refactoring_data_bd(products)
+print(products)
+products = TreatData.refactoring_data_bd(products)
+print(products)
 
 # Fechar a conexão
 conn.close()
