@@ -1,3 +1,6 @@
+import csv
+import os
+
 import mysql.connector
 from scripts.TreatData import TreatData
 
@@ -18,8 +21,15 @@ cursor.execute('SELECT p.name, c.name FROM product as p, category as c where p.c
 # Buscar os resultados
 products = cursor.fetchall()
 print(products)
-products = TreatData.refactoring_data_bd(products)
+products = TreatData.refactoring_data_db(products)
 print(products)
+
+path = os.path.join('dict', 'data_db.csv')
+
+with open(path, 'w', newline='') as archive_csv:
+    writer_csv = csv.writer(archive_csv)
+    writer_csv.writerow(["Product", "Category"])
+    writer_csv.writerows(products)
 
 # Fechar a conexão
 conn.close()

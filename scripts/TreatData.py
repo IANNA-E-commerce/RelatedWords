@@ -1,9 +1,8 @@
 import re
 
-import spacy
 from nltk.corpus import stopwords
 from spellchecker import SpellChecker
-from textblob import TextBlob
+from deep_translator import GoogleTranslator
 
 
 class TreatData:
@@ -37,33 +36,35 @@ class TreatData:
                 words.append(lemma)
         return words
 
-    def refactoring_data_bd(matrix):
-        nlp = spacy.load('pt_core_news_md')
+    def refactoring_data_db(matrix):
         matrix_translated = []
-        spell = SpellChecker(language="pt")
         try:
             for array in matrix:
                 array_translated = []
-                for word in array:
-                    cleaned_word = re.sub(r"[()]", "", word)
+                for sentence in array:
+                    cleaned_word = re.sub(r"[()]", "", sentence)
                     text_row = ""
-                    # lemma = nlp(cleaned_word)
-                    print(cleaned_word)
-                    for token in cleaned_word:
-                        # token_lemma = token.lemma_
-                        blob = TextBlob(token)
-                        if not spell.unknown(token):
-                            try:
-                                translated_word = blob.translate(to="pt", from_lang="en")
-                                text_row = f"{text_row} {translated_word} {' '}"
-                            except Exception:
-                                text_row = f"{text_row} {token} {' '}"
-                            text_row = text_row.lower()
-                        else:
-                            text_row = f"{text_row} {token} {' '}"
-                    text_row = text_row.rstrip()
+                    words = cleaned_word.split(" ")
+                    for word in words:
+                        text_row = f"{text_row} {TreatData.translation_words_db(word)}"
+                    text_row = text_row.strip()
                     array_translated.append(text_row)
                 matrix_translated.append(array_translated)
         except Exception as e:
             print("Exceção:", e)
         return matrix_translated
+
+    def translation_words_db(word):
+        spell = SpellChecker(language="pt")
+        words_dont_translate \
+            = ["whome", "interno", "francis", "-", "well", "painél", "gc", "gk", "go", "classifieredge", "iot",
+               "relé", "relê", "inversor", "gd", "+", "weg", "home", "dimmer", "interruptor", "weghome",
+               "software", "wegnology", "lackthane", "primer", "gnp", "pumpw", "diluente"]
+        word_formatted = word.lower()
+        if not words_dont_translate.__contains__(word_formatted):
+            if not spell.unknown(word_formatted):
+                try:
+                    return GoogleTranslator(source="auto", target="pt").translate(word_formatted)
+                except Exception:
+                    return word_formatted
+        return word_formatted
