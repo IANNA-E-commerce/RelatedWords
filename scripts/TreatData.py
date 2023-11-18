@@ -1,8 +1,11 @@
+import os
 import re
+import langid
 
+import spacy
 from nltk.corpus import stopwords
 from spellchecker import SpellChecker
-from deep_translator import GoogleTranslator
+from deep_translator import GoogleTranslator, single_detection
 
 
 class TreatData:
@@ -46,20 +49,30 @@ class TreatData:
                     text_row = ""
                     words = cleaned_word.split(" ")
                     for word in words:
-                        text_row = f"{text_row} {TreatData.translation_words_db(word)}"
+                        text_row = f"{text_row} {TreatData.translation_words(word)}"
                     text_row = text_row.strip()
                     array_translated.append(text_row)
+                array_translated.insert(0, array[0])
                 matrix_translated.append(array_translated)
         except Exception as e:
             print("Exceção:", e)
         return matrix_translated
 
-    def translation_words_db(word):
-        spell = SpellChecker(language="pt")
+    def refactoring_data_input(array):
+        # [INPUT, ORIGINAL_LANGUAGE]
+        sentence_array = array[0].split(" ")
+        sentence_translated_array = []
+        for word in sentence_array:
+            sentence_translated_array.append(TreatData.translation_words(word))
+        return sentence_translated_array
+
+    def translation_words(word):
         words_dont_translate \
             = ["whome", "interno", "francis", "-", "well", "painél", "gc", "gk", "go", "classifieredge", "iot",
                "relé", "relê", "inversor", "gd", "+", "weg", "home", "dimmer", "interruptor", "weghome",
-               "software", "wegnology", "lackthane", "primer", "gnp", "pumpw", "diluente"]
+               "software", "wegnology", "lackthane", "primer", "gnp", "pumpw", "diluente", "wpump"]
+
+        spell = SpellChecker(language="pt")
         word_formatted = word.lower()
         if not words_dont_translate.__contains__(word_formatted):
             if not spell.unknown(word_formatted):
@@ -68,3 +81,6 @@ class TreatData:
                 except Exception:
                     return word_formatted
         return word_formatted
+
+
+print(TreatData.refactoring_data_input(["wemob well", ""]))
