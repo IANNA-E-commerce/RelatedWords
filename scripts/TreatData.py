@@ -1,8 +1,5 @@
-import os
 import re
-import langid
 
-import spacy
 from nltk.corpus import stopwords
 from spellchecker import SpellChecker
 from deep_translator import GoogleTranslator, single_detection
@@ -43,16 +40,19 @@ class TreatData:
         matrix_translated = []
         try:
             for array in matrix:
+                print("array - ", array)
+                print("array 1 - ", array[1])
                 array_translated = []
-                for sentence in array:
-                    cleaned_word = re.sub(r"[()]", "", sentence)
-                    text_row = ""
-                    words = cleaned_word.split(" ")
-                    for word in words:
-                        text_row = f"{text_row} {TreatData.translation_words(word)}"
-                    text_row = text_row.strip()
-                    array_translated.append(text_row)
-                array_translated.insert(0, array[0])
+                cleaned_word = re.sub(r"[()]", "", array[0])
+                text_row = f"{array[1]}, "
+                words = cleaned_word.split(" ")
+                for word in words:
+                    print("word - ", word)
+                    text_row += f" {TreatData.translation_words(word)}"
+                text_row = text_row.strip()
+                array_translated.append(text_row)
+                # array_translated.insert(0, array[0])
+                print("text row - ", array_translated)
                 matrix_translated.append(array_translated)
         except Exception as e:
             print("Exceção:", e)
@@ -81,6 +81,3 @@ class TreatData:
                 except Exception:
                     return word_formatted
         return word_formatted
-
-
-print(TreatData.refactoring_data_input(["wemob well", ""]))

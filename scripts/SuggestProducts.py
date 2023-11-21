@@ -1,6 +1,7 @@
 # python -m spacy download en_core_web_md
 # python -m spacy download pt_core_news_md
 # python -m spacy download es_core_news_md
+import array
 import os
 
 import spacy
@@ -45,17 +46,59 @@ class SuggestProducts:
 
     def search_db(words_classified):
         data_db = {}
-        path = os.path.join('dict', 'data_db.csv')
-        with open(path, "r") as file:
-            for line in file:
-                parts = line.strip().split(",")
-                if len(parts) == 2:
-                    word, translated_word = parts[0], parts[1]
-                    data_db[word] = translated_word
+        path = os.path.join('../dict', 'data_db.csv')
+        try:
+            with open(path, "r", newline='') as file:
+                for line in file:
+                    parts = line.strip().split(",")
+                    if len(parts) == 2:
+                        parts[0] = parts[0].replace('"', "")
+                        parts[1] = parts[1].replace('"', "").lstrip()
+                        translated_word, id_product = parts[1], parts[0]
+                        data_db[translated_word] = id_product
 
-        for word in words_classified:
-            if data_db.__contains__(word[0]) or data_db.__contains__(word[1]):
+            product_attribute = []
+            product_name = []
 
-        return data_db
+            for data in data_db.items():
+                for item in words_classified[0]:
+                    if data[0].__contains__(item):
+                        product_attribute.append(data)
+                for item in words_classified[1]:
+                    if data[0].__contains__(item):
+                        product_name.append(data)
 
-# print(Repository.products)
+            # for
+
+            # Extrair apenas os nomes dos produtos para facilitar a comparação
+            product_name_names = list(set(item for item in product_name))
+            product_attribute_names = list(set(item for item in product_attribute))
+
+            common_product_names = []
+            different_products_names = product_attribute_names
+
+            # Encontrar a  dos conjuntos
+            for elem in product_attribute_names:
+                if elem in product_name_names:
+                    common_product_names.append(elem)
+                    product_name_names.remove(elem)
+                    different_products_names.remove(elem)
+
+            different_products_names.append(product_name_names)
+            common_product_names.append(different_products_names)
+
+            # Exibir os itens comuns
+            common_product_names_list = list(common_product_names)
+            print("common_product_names_list - ", common_product_names_list)
+
+            # print("product_name - ", product_name)
+            # print("product_attribute - ", product_attribute)
+            print("different_products_names - ", different_products_names)
+
+        except FileNotFoundError:
+            print(f"O arquivo '{path}' não foi encontrado.")
+        except Exception as e:
+            print(f"Ocorreu um erro: {e}")
+
+
+SuggestProducts.search_db([["aberto", "tensão"], ["motor"]])

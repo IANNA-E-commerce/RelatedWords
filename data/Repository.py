@@ -1,8 +1,10 @@
+import array
 import csv
 import os
-import string
 
 import mysql.connector
+import numpy
+
 from scripts.TreatData import TreatData
 
 # Conectar ao banco de dados
@@ -20,17 +22,17 @@ cursor = conn.cursor()
 cursor.execute('SELECT name, id FROM product')
 
 # Buscar os resultados
-products = str(cursor.fetchall())
-print(products)
-products = TreatData.refactoring_data_db(products)
-print(products)
+products = cursor.fetchall()
+print("products 1 - ", products)
+# products = TreatData.refactoring_data_db(products)
+# print(products)
 
-path = os.path.join('dict', 'data_db.csv')
-
-with open(path, 'w', newline='') as archive_csv:
-    writer_csv = csv.writer(archive_csv)
-    writer_csv.writerow(["Product"])
-    writer_csv.writerows(products)
+# path = os.path.join('../dict', 'data_db.csv')
+#
+# with open(path, 'w', newline='') as archive_csv:
+#     writer_csv = csv.writer(archive_csv)
+#     writer_csv.writerow(["Id", "Product"])
+#     writer_csv.writerows(products)
 
 # Fechar a conexão
 conn.close()
