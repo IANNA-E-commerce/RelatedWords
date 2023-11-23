@@ -3,6 +3,7 @@ import re
 from nltk.corpus import stopwords
 from spellchecker import SpellChecker
 from deep_translator import GoogleTranslator, single_detection
+from unidecode import unidecode
 
 
 class TreatData:
@@ -13,12 +14,14 @@ class TreatData:
 
     # Returns a string array
     def clean_text(text):
-        text = text.lower()
-        string = re.findall(r"\b\w+\b|[,.)('\"\[\];><:\\/@!#$%¨&*_+=]", text, re.UNICODE)
+        text_to_clean = text.lower()
+        text_to_clean = unidecode(text_to_clean)
+        # string = []:?
+        string = re.sub("[^a-zA-Z0-9]+", " ", text_to_clean).rstrip().split(" ")
         return string
 
     def clean_and_refactoring_text(text, lan, nlp):
-        text = TreatData.clean_text(text)
+        text_cleaned = TreatData.clean_text(text)
         words = []
         add_words = []
 
@@ -33,10 +36,9 @@ class TreatData:
             lan = "spanish"
             add_words.extend(["no", "sin", "con", "entre", "sobre", "bajo", "en", "debajo", "abajo", "arriba"])
 
-        print(TreatData.words_dont_translate)
         stop_words = set(stopwords.words(lan))
 
-        for word in text:
+        for word in text_cleaned:
             if word in TreatData.words_dont_translate:
                 words.append(word)
             else:

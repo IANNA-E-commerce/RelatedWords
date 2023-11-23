@@ -15,30 +15,23 @@ nlp_pt = spacy.load('pt_core_news_md')
 nlp_es = spacy.load('es_core_news_md')
 nlp_en = spacy.load('en_core_web_md')
 
-# Cria dois objetos Doc
-# doc1 = TreatData.clean_and_refactoring_text("açAí caiu morrera chutou abraçará colhendo abrasivo mouse abraçar-te-ia",
-#                                             "pt_BR", nlp_pt)
-# doc2 = clean_text(Repository.products[1][0])
-# print(type(doc1))
-# print(doc2)
 
-# Calcula a similaridade entre os dois objetos Doc
-# similarity = doc1.similarity(doc2)
-# print(Repository.products[0][0] + " ", Repository.products[1][0] + " ", similarity)
 class SuggestProducts:
 
     def main(matrix):
         treat_data = TreatData.clean_and_refactoring_text(matrix[0], matrix[1], nlp_pt)
-        print("treat_data: ", treat_data)
-        words_classified = SuggestProducts.classifier_words(treat_data)
-        print("words_classified: ", words_classified)
+        translated = []
+        for word in treat_data:
+            translated.append(TreatData.translation_words(word))
+        words_classified = SuggestProducts.classifier_words(translated)
         products_ranked = SuggestProducts.products_ranked(words_classified)
         return products_ranked
 
     def classifier_words(array_words):
         name_products_weg = \
             ["motor", "bomba", "turbina", "partida", "suave", "subestação", "sensor"
-             "câmera", "controle", "gerador", "hidrogerador", "wemob", "inversor",
+                                                                            "câmera", "controle", "gerador",
+             "hidrogerador", "wemob", "inversor",
              "painél", "painel", "cubículo", "redutor", "plugue", "relé", "relê", "sensor",
              "software", "tinta", "tomada", "motorredutor", "transformador", "secionador",
              "turbogerador", "módulo", "regulador", "conversor", "verniz", "reator"]
@@ -84,9 +77,6 @@ class SuggestProducts:
                 elif nlp_pt(item).similarity(nlp_pt(data[0])) > 0.57:
                     if not products_similarity.__contains__(data[0]):
                         products_similarity.append(data)
-                print(nlp_pt(item), nlp_pt(data[0]))
-
-        print("b.f products_db: ", products_db)
 
         for data in data_db.items():
             for item in words_classified[1]:
@@ -96,14 +86,22 @@ class SuggestProducts:
                     if not products_similarity.__contains__(data[0]):
                         products_similarity.append(data)
 
-        print("products_db: ", products_db)
-
+        print("products_db b: ", products_db)
         products_db += products_similarity
+        products_duplicated = []
+        print("products_db a: ", products_db)
+
         for elem in products_db:
+            print("elem geral: ", elem)
             if elem not in products_not_duplicated:
+                print("elem if: ", elem)
                 products_not_duplicated.append(elem)
+            else:
+                print("elem else: ", elem)
+                products_duplicated.append(elem)
+                products_not_duplicated.remove(elem)
 
-        return products_not_duplicated
+        print("products_duplicated: ", products_duplicated)
+        print("products_not_duplicated: ", products_not_duplicated)
 
-
-print(SuggestProducts.main(["controle whome", "pt_BR"]))
+        return products_duplicated + products_not_duplicated
