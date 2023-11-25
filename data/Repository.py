@@ -1,39 +1,46 @@
-import array
 import csv
 import os
 
 import mysql.connector
-import numpy
 
 from scripts.TreatData import TreatData
 
-# Conectar ao banco de dados
-conn = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    password='root',
-    database='bd_weg'
-)
+class Repository:
 
-# Criar um cursor
-cursor = conn.cursor()
+    # Connection to DB
+    conn = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='root',
+        database='bd_weg'
+    )
 
-# Executar uma consulta SQL
-cursor.execute('SELECT name, id FROM product')
+    def find_name_id_products():
+        cursor = Repository.conn.cursor()
 
-# Buscar os resultados
-products = cursor.fetchall()
-print("products 1 - ", products)
-# products = TreatData.refactoring_data_db(products)
-# print(products)
+        cursor.execute('SELECT name, id FROM product')
 
-# path = os.path.join('../dict', 'data_db.csv')
-#
-# with open(path, 'w', newline='') as archive_csv:
-#     writer_csv = csv.writer(archive_csv)
-#     writer_csv.writerow(["Id", "Product"])
-#     writer_csv.writerows(products)
+        products = cursor.fetchall()
+        products = TreatData.refactoring_data_db(products)
 
-# Fechar a conexão
-conn.close()
-cursor.close()
+        path = os.path.join('../dict', 'data_db.csv')
+
+        with open(path, 'w', newline='') as archive_csv:
+            writer_csv = csv.writer(archive_csv)
+            writer_csv.writerow(["Id", "Product"])
+            writer_csv.writerows(products)
+
+        Repository.conn.close()
+        cursor.close()
+
+    def return_product(id):
+        cursor = Repository.conn.cursor()
+
+        cursor.execute("SELECT * FROM product WHERE id = %s", (id,))
+
+        product = cursor.fetchall()
+        print("product: ", product)
+
+        Repository.conn.close()
+        cursor.close()
+        return product

@@ -1,8 +1,9 @@
 import re
 
+import spacy
 from nltk.corpus import stopwords
 from spellchecker import SpellChecker
-from deep_translator import GoogleTranslator, single_detection
+from deep_translator import GoogleTranslator
 from unidecode import unidecode
 
 
@@ -20,21 +21,28 @@ class TreatData:
         string = re.sub("[^a-zA-Z0-9]+", " ", text_to_clean).rstrip().split(" ")
         return string
 
-    def clean_and_refactoring_text(text, lan, nlp):
+    def clean_and_refactoring_text(text, lan):
         text_cleaned = TreatData.clean_text(text)
+        print(lan)
         words = []
         add_words = []
 
         if lan == "pt_BR":
+            nlp_pt = spacy.load('pt_core_news_md')
             lan = "portuguese"
             add_words.extend(["não", "sem", "com", "entre", "sobre", "sob", "embaixo", "cima"])
+            nlp = nlp_pt
         elif lan == "en_US":
+            nlp_en = spacy.load('en_core_web_md')
             lan = "english"
             add_words.extend(
                 ["not", "no", "non", "nor", "without", "with", "between", "above", "under", "on", "in", "at"])
+            nlp = nlp_en
         else:
+            nlp_es = spacy.load('es_core_news_md')
             lan = "spanish"
             add_words.extend(["no", "sin", "con", "entre", "sobre", "bajo", "en", "debajo", "abajo", "arriba"])
+            nlp = nlp_es
 
         stop_words = set(stopwords.words(lan))
 
@@ -72,14 +80,24 @@ class TreatData:
             sentence_translated_array.append(TreatData.translation_words(word))
         return sentence_translated_array
 
-    def translation_words(word):
-        spell = SpellChecker(language="pt")
-        word_formatted = word.lower()
-        if not TreatData.words_dont_translate.__contains__(word_formatted):
-            if not spell.unknown(word_formatted):
-                try:
-                    return GoogleTranslator(source="auto", target="pt").translate(word_formatted)
-                except Exception:
-                    return word_formatted
+    def translation_words(word, lang):
+        try:
+            if lang == "pt_BR":
+                spell = SpellChecker(language="pt")
+            elif lang == "en_US":
+                spell = SpellChecker(language="en")
+            else:
+                spell = SpellChecker(language="es")
 
-        return word_formatted
+            word_formatted = word.lower()
+            if not TreatData.words_dont_translate.__contains__(word_formatted):
+                if not spell.unknown(word_formatted):
+                    try:
+                        return GoogleTranslator(source="auto", target="pt").translate(word_formatted)
+                    except Exception:
+                        return word_formatted
+            return word_formatted
+        except Exception:
+            print("Error in Treat Data - translation_words: ", Exception)
+            return word
+

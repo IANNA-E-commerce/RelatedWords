@@ -12,17 +12,15 @@ from scripts.TreatData import TreatData
 
 # Carrega o modelo em português
 nlp_pt = spacy.load('pt_core_news_md')
-nlp_es = spacy.load('es_core_news_md')
-nlp_en = spacy.load('en_core_web_md')
 
 
 class SuggestProducts:
 
-    def main(matrix):
-        treat_data = TreatData.clean_and_refactoring_text(matrix[0], matrix[1], nlp_pt)
+    def main(array):
+        treat_data = TreatData.clean_and_refactoring_text(array[0], array[1])
         translated = []
         for word in treat_data:
-            translated.append(TreatData.translation_words(word))
+            translated.append(TreatData.translation_words(word, array[1]))
         words_classified = SuggestProducts.classifier_words(translated)
         products_ranked = SuggestProducts.products_ranked(words_classified)
         return products_ranked
@@ -86,18 +84,13 @@ class SuggestProducts:
                     if not products_similarity.__contains__(data[0]):
                         products_similarity.append(data)
 
-        print("products_db b: ", products_db)
         products_db += products_similarity
         products_duplicated = []
-        print("products_db a: ", products_db)
 
         for elem in products_db:
-            print("elem geral: ", elem)
             if elem not in products_not_duplicated:
-                print("elem if: ", elem)
                 products_not_duplicated.append(elem)
             else:
-                print("elem else: ", elem)
                 products_duplicated.append(elem)
                 products_not_duplicated.remove(elem)
 
@@ -105,3 +98,5 @@ class SuggestProducts:
         print("products_not_duplicated: ", products_not_duplicated)
 
         return products_duplicated + products_not_duplicated
+
+SuggestProducts.main(["bomba ip21", "es_MX"])
