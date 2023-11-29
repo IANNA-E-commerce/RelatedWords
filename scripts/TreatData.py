@@ -13,17 +13,16 @@ class TreatData:
            "relé", "relê", "inversor", "gd", "+", "weg", "home", "dimmer", "interruptor", "weghome",
            "software", "wegnology", "lackthane", "primer", "gnp", "pumpw", "diluente", "wpump"]
 
-    # Returns a string array
     def clean_text(text):
         text_to_clean = text.lower()
         text_to_clean = unidecode(text_to_clean)
-        # string = []:?
         string = re.sub("[^a-zA-Z0-9]+", " ", text_to_clean).rstrip().split(" ")
         return string
 
     def clean_and_refactoring_text(text, lan):
+        print("text: ", text)
         text_cleaned = TreatData.clean_text(text)
-        print(lan)
+        print("text_cleaned: ", text_cleaned)
         words = []
         add_words = []
 
@@ -45,7 +44,9 @@ class TreatData:
             nlp = nlp_es
 
         stop_words = set(stopwords.words(lan))
+        print("stop_words: ", stop_words)
 
+        print("text_cleaned: ", text_cleaned)
         for word in text_cleaned:
             if word in TreatData.words_dont_translate:
                 words.append(word)

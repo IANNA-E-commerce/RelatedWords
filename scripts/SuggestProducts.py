@@ -2,9 +2,7 @@
 # python -m spacy download pt_core_news_md
 # python -m spacy download es_core_news_md
 import os
-
 import spacy
-
 from scripts.TreatData import TreatData
 
 # nltk.download('punkt')
@@ -94,9 +92,4 @@ class SuggestProducts:
                 products_duplicated.append(elem)
                 products_not_duplicated.remove(elem)
 
-        print("products_duplicated: ", products_duplicated)
-        print("products_not_duplicated: ", products_not_duplicated)
-
         return products_duplicated + products_not_duplicated
-
-SuggestProducts.main(["bomba ip21", "es_MX"])
