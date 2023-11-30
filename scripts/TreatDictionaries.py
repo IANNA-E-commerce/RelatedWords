@@ -7,13 +7,13 @@ class TreatDictionaries:
         global custom_corrections_file
         enchant_dict = None
         if language == "en_US":
-            custom_corrections_file = "./dict/dictionary_english.txt"
+            custom_corrections_file = "../dict/dictionary_english.txt"
             enchant_dict = enchant.Dict('en_US')
         elif language == "es_MX":
-            custom_corrections_file = "./dict/dictionary_spanish.txt"
+            custom_corrections_file = "../dict/dictionary_spanish.txt"
             enchant_dict = enchant.Dict('es_MX')
         else:
-            custom_corrections_file = "./dict/dictionary_portuguese.txt"
+            custom_corrections_file = "../dict/dictionary_portuguese.txt"
             enchant_dict = enchant.Dict('pt_BR')
         return list([enchant_dict, TreatDictionaries.open_file_custom_corrections()])
 

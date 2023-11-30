@@ -1,18 +1,19 @@
 import time
-
-import pymysql
+import mysql.connector
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from scripts.SpellingChecker import SpellingChecker
+from scripts.SuggestProducts import SuggestProducts
 
 class Controller:
 
-    connection = pymysql.connect(
-        host='localhost',
-        user='root',
-        password='root',
-        database='bd_weg')
+    app = Flask(__name__)
+    CORS(app)
 
+    @staticmethod
     def monitor_update_queue():
         try:
-            with Controller.connection.cursor() as cursor:
+            with Controller.conn.cursor() as cursor:
                 while True:
                     cursor.execute("SELECT * FROM log_update LIMIT 1")
                     result = cursor.fetchone()
@@ -28,7 +29,44 @@ class Controller:
                     else:
                         time.sleep(1)
         finally:
-            connection.close()
+            Controller.conn.close()
 
-    if __name__ == '__main__':
-        monitor_update_queue()
+    @staticmethod
+    @app.route('/related_words', methods=['GET'])
+    def related_words():
+        phrase = request.args.get('input')
+        lang = request.args.get('language')
+
+        input_info = [phrase, lang]
+        print("input_info: ", input_info)
+
+        phrase_treated = SpellingChecker.custom_spell_check(input_info)
+        print("phrase_treated: ", phrase_treated)
+
+        products = SuggestProducts.main([phrase_treated, input_info[1]])
+        print("products: ", products)
+
+        # Criar o JSON
+        answer = jsonify({'original_phrase': phrase, 'treated_phrase': phrase_treated, 'products': products})
+
+        # Reinicializa as variáveis antes de finalizar a função
+        del input_info, phrase_treated, products
+
+        # Retorna o array como JSON
+        return answer
+
+
+# Configuração da conexão fora da classe
+Controller.conn = mysql.connector.connect(
+    host='localhost',
+    user='root',
+    password='root',
+    database='bd_weg'
+)
+
+if __name__ == '__main__':
+    # Executa o método para monitorar a fila antes de iniciar o aplicativo Flask
+    # Controller.monitor_update_queue()
+
+    # Executa o aplicativo Flask
+    Controller.app.run(debug=True)

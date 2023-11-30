@@ -14,15 +14,14 @@ class TreatData:
            "software", "wegnology", "lackthane", "primer", "gnp", "pumpw", "diluente", "wpump"]
 
     def clean_text(text):
-        text_to_clean = text.lower()
+        text_without_space = text.strip()
+        text_to_clean = text_without_space.lower()
         text_to_clean = unidecode(text_to_clean)
         string = re.sub("[^a-zA-Z0-9]+", " ", text_to_clean).rstrip().split(" ")
         return string
 
     def clean_and_refactoring_text(text, lan):
-        print("text: ", text)
         text_cleaned = TreatData.clean_text(text)
-        print("text_cleaned: ", text_cleaned)
         words = []
         add_words = []
 
@@ -44,9 +43,7 @@ class TreatData:
             nlp = nlp_es
 
         stop_words = set(stopwords.words(lan))
-        print("stop_words: ", stop_words)
 
-        print("text_cleaned: ", text_cleaned)
         for word in text_cleaned:
             if word in TreatData.words_dont_translate:
                 words.append(word)

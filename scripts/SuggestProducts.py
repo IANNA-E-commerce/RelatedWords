@@ -2,6 +2,8 @@
 # python -m spacy download pt_core_news_md
 # python -m spacy download es_core_news_md
 import os
+
+import nltk
 import spacy
 from scripts.TreatData import TreatData
 
@@ -43,7 +45,7 @@ class SuggestProducts:
 
     def search_db():
         data_db = {}
-        path = os.path.join('dict', 'data_db.csv')
+        path = os.path.join('../dict', 'data_db.csv')
         try:
             with open(path, "r", newline='') as file:
                 for line in file:
@@ -62,6 +64,7 @@ class SuggestProducts:
 
     def products_ranked(words_classified):
         data_db = SuggestProducts.search_db()
+        print(data_db)
         products_db = []
         products_similarity = []
         products_not_duplicated = []
