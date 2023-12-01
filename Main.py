@@ -1,6 +1,4 @@
-import scripts.SuggestProducts as Suggest
-from scripts.SpellingChecker import SpellingChecker
-from scripts.SuggestProducts import SuggestProducts
+from data.Controller import app
 
 class Main:
-    print("Hi Lorena")
+    print("Hallo")

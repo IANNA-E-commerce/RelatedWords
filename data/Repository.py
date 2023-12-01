@@ -39,7 +39,6 @@ class Repository:
         cursor.execute("SELECT * FROM product WHERE id = %s", (id,))
 
         product = cursor.fetchall()
-        print("product: ", product)
 
         Repository.conn.close()
         cursor.close()
